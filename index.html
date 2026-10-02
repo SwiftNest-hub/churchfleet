@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fleet Operations — Church Fleet &amp; Key Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="login-screen">
+  <div class="login-shell">
+    <div class="login-header">
+      <svg class="mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="29" y="4" width="6" height="16" fill="#F59E0B"/>
+        <rect x="22" y="10" width="20" height="6" fill="#F59E0B"/>
+        <path d="M14 30 L32 18 L50 30 V56 H14 Z" fill="none" stroke="#F59E0B" stroke-width="4" stroke-linejoin="round"/>
+        <rect x="27" y="38" width="10" height="18" fill="#F59E0B"/>
+      </svg>
+      <h1>Fleet Operations</h1>
+      <span>Church Fleet &amp; Key Management</span>
+    </div>
+
+    <div class="login-card" id="login-cols-wrap">
+      <div class="login-cols" id="login-cols">
+        <div class="login-col" id="login-col-driver">
+          <div class="login-col-icon">D</div>
+          <h3>Drivers</h3>
+          <select id="driver-name-select"></select>
+          <input id="pin-driver" type="text" inputmode="numeric" autocomplete="off" placeholder="Access code" maxlength="20" />
+          <button class="login-btn" onclick="attemptDriverLogin()">Enter</button>
+        </div>
+        <div class="login-col" id="login-col-worker">
+          <div class="login-col-icon">W</div>
+          <h3>Staff</h3>
+          <select id="worker-name-select"></select>
+          <input id="pin-worker" type="text" inputmode="numeric" autocomplete="off" placeholder="Access code" maxlength="20" />
+          <button class="login-btn" onclick="attemptWorkerLogin()">Enter</button>
+        </div>
+        <div class="login-col" id="login-col-admin">
+          <div class="login-col-icon">M</div>
+          <h3>Manager / Bishops</h3>
+          <select id="admin-name-select"></select>
+          <input id="pin-admin" type="text" inputmode="numeric" autocomplete="off" placeholder="Access code" maxlength="20" />
+          <button class="login-btn" onclick="attemptAdminLogin()">Enter</button>
+        </div>
+      </div>
+    </div>
+    <div id="login-error"></div>
+    <div class="login-foot-row"><button class="back-btn" onclick="resetSystemData()">Reset system data</button></div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app">
+  <aside>
+    <div class="side-brand">
+      <svg class="mark small" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="29" y="4" width="6" height="16" fill="#F59E0B"/>
+        <rect x="22" y="10" width="20" height="6" fill="#F59E0B"/>
+        <path d="M14 30 L32 18 L50 30 V56 H14 Z" fill="none" stroke="#F59E0B" stroke-width="4" stroke-linejoin="round"/>
+        <rect x="27" y="38" width="10" height="18" fill="#F59E0B"/>
+      </svg>
+      <div>Fleet Ops<small>Church Fleet &amp; Key Mgmt</small></div>
+    </div>
+    <nav class="tabs" id="nav-tabs"></nav>
+    <div class="side-user">
+      <div class="role" id="user-role"></div>
+      <div class="name" id="user-name"></div>
+      <button class="logout-btn" onclick="logout()">Log out</button>
+    </div>
+  </aside>
+  <main>
+
+    <!-- OVERVIEW -->
+    <section class="page" id="page-overview">
+      <div class="page-head"><div><h2>Overview</h2><p>Live snapshot of today's operation</p></div></div>
+      <div class="stat-grid" id="overview-stats"></div>
+      <div class="panel"><h3>License alerts</h3>
+        <table><thead><tr><th>Driver</th><th>License expiry</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody id="overview-license-body"></tbody></table>
+      </div>
+      <div class="panel"><h3>Keys currently out</h3>
+        <table><thead><tr><th>Driver</th><th>Slot</th><th>Vehicle</th><th>Since</th></tr></thead>
+        <tbody id="keys-out-body"></tbody></table>
+      </div>
+      <div class="panel"><h3>Open faults</h3>
+        <table><thead><tr><th>Reported by</th><th>Vehicle</th><th>Issue</th><th>Status</th></tr></thead>
+        <tbody id="overview-faults-body"></tbody></table>
+      </div>
+    </section>
+
+    <!-- BOOKINGS & KEYS (admin) -->
+    <section class="page" id="page-bookings">
+      <div class="page-head"><div><h2>Bookings &amp; Keys</h2><p>Approve requests and track key movement</p></div></div>
+      <div class="panel"><h3>Pending approval</h3>
+        <table><thead><tr><th>Driver</th><th>Slot</th><th>Vehicle</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody id="pending-bookings-body"></tbody></table>
+      </div>
+      <div class="panel"><h3>All bookings</h3>
+        <table><thead><tr><th>Driver</th><th>Slot</th><th>Vehicle</th><th>Date</th><th>Status</th><th></th></tr></thead>
+        <tbody id="all-bookings-body"></tbody></table>
+      </div>
+    </section>
+
+    <!-- VEHICLES -->
+    <section class="page" id="page-vehicles">
+      <div class="page-head"><div><h2>Vehicles</h2><p>Fleet condition, fuel and mileage</p></div>
+        <button class="btn amber" onclick="openVehicleForm()">+ Add vehicle</button></div>
+      <div id="vehicle-form-wrap" style="display:none" class="panel">
+        <h3 id="vehicle-form-title">Add vehicle</h3>
+        <div class="form-grid">
+          <div class="field"><label>Vehicle name</label><input id="veh-name" placeholder="e.g. Toyota Hiace"></div>
+          <div class="field"><label>Car number</label><input id="veh-carnumber" placeholder="e.g. Car 12"></div>
+          <div class="field"><label>Plate number</label><input id="veh-plate" placeholder="e.g. GT 4521-20"></div>
+          <div class="field"><label>Fuel level (%)</label><input id="veh-fuel" type="number" min="0" max="100" value="100"></div>
+          <div class="field"><label>Mileage (km)</label><input id="veh-mileage" type="number" min="0" value="0"></div>
+        </div>
+        <div class="form-grid full"><div class="field"><label>Condition notes</label><textarea id="veh-condition" placeholder="e.g. Good condition, tyres due for check"></textarea></div></div>
+        <div class="action-row"><button class="btn amber" onclick="saveVehicle()">Save vehicle</button><button class="btn ghost" onclick="closeVehicleForm()">Cancel</button></div>
+      </div>
+      <div class="vehicle-grid" id="vehicles-grid"></div>
+    </section>
+
+    <!-- DRIVERS (admin + worker) -->
+    <section class="page" id="page-drivers">
+      <div class="page-head"><div><h2>Drivers</h2><p>Profiles, license status, and suspension</p></div>
+        <button class="btn amber" id="add-driver-btn" onclick="openDriverForm()">+ Add driver</button></div>
+      <div id="driver-form-wrap" style="display:none" class="panel">
+        <h3 id="driver-form-title">Add driver</h3>
+        <div class="form-grid">
+          <div class="field"><label>Full name</label><input id="drv-name"></div>
+          <div class="field"><label>Email</label><input id="drv-email" type="email"></div>
+          <div class="field"><label>License number</label><input id="drv-license"></div>
+          <div class="field"><label>License expiry date</label><input id="drv-expiry" type="date"></div>
+          <div class="field"><label>Access code (numeric)</label><input id="drv-code" type="text" inputmode="numeric" placeholder="e.g. 5001"></div>
+        </div>
+        <div class="action-row"><button class="btn amber" onclick="saveDriver()">Save</button><button class="btn ghost" onclick="closeDriverForm()">Cancel</button></div>
+      </div>
+      <div class="panel">
+        <table><thead><tr><th>Name</th><th>License</th><th>Expiry</th><th>Status</th><th>Code</th><th>Actions</th></tr></thead>
+        <tbody id="drivers-body"></tbody></table>
+      </div>
+    </section>
+
+    <!-- PENALTIES (worker + admin) -->
+    <section class="page" id="page-penalties">
+      <div class="page-head"><div><h2>Penalty System</h2><p>Log and review driver penalties</p></div></div>
+      <div class="panel">
+        <h3>Issue a penalty</h3>
+        <div class="form-grid">
+          <div class="field"><label>Driver</label><select id="pen-driver"></select></div>
+          <div class="field"><label>Points</label><input id="pen-points" type="number" min="1" value="1"></div>
+        </div>
+        <div class="form-grid full"><div class="field"><label>Reason</label><textarea id="pen-reason" placeholder="Describe the infraction"></textarea></div></div>
+        <button class="btn amber" onclick="issuePenalty()">Log penalty</button>
+      </div>
+      <div class="panel"><h3>Penalty history</h3>
+        <table><thead><tr><th>Driver</th><th>Points</th><th>Reason</th><th>Type</th><th>Status</th><th>Issued by</th><th>Date</th><th></th></tr></thead>
+        <tbody id="penalties-body"></tbody></table>
+      </div>
+    </section>
+
+    <!-- CALL TO ORDER (worker + admin) -->
+    <section class="page" id="page-callorder">
+      <div class="page-head"><div><h2>Call Driver to Order</h2><p>Formal conduct notices for drivers</p></div></div>
+      <div class="panel">
+        <h3>New notice</h3>
+        <div class="form-grid">
+          <div class="field"><label>Driver</label><select id="co-driver"></select></div>
+        </div>
+        <div class="form-grid full"><div class="field"><label>Note</label><textarea id="co-note" placeholder="Reason for calling this driver to order"></textarea></div></div>
+        <button class="btn amber" onclick="issueCallToOrder()">Issue notice</button>
+      </div>
+      <div class="panel"><h3>Notice history</h3>
+        <table><thead><tr><th>Driver</th><th>Note</th><th>Issued by</th><th>Date</th></tr></thead>
+        <tbody id="callorder-body"></tbody></table>
+      </div>
+    </section>
+
+    <!-- APPROVALS (worker) -->
+    <section class="page" id="page-approvals">
+      <div class="page-head"><div><h2>Approve Bookings</h2><p>Review pending key requests</p></div></div>
+      <div class="panel">
+        <table><thead><tr><th>Driver</th><th>Slot</th><th>Vehicle</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody id="worker-pending-body"></tbody></table>
+      </div>
+    </section>
+
+    <!-- FAULTS (admin view) -->
+    <section class="page" id="page-faults">
+      <div class="page-head"><div><h2>Faults</h2><p>Reported vehicle issues</p></div></div>
+      <div class="panel">
+        <table><thead><tr><th>Reported by</th><th>Vehicle</th><th>Issue</th><th>Status</th><th></th></tr></thead>
+        <tbody id="faults-admin-body"></tbody></table>
+      </div>
+    </section>
+
+    <!-- KEY SLOTS (admin) -->
+    <section class="page" id="page-slots">
+      <div class="page-head"><div><h2>Key Slots</h2><p>Regular schedule and one-off events</p></div>
+        <button class="btn amber" onclick="openSlotForm()">+ New slot</button></div>
+      <div id="slot-form-wrap" style="display:none" class="panel">
+        <h3>New key slot</h3>
+        <div class="form-grid">
+          <div class="field"><label>Type</label>
+            <select id="slot-type" onchange="toggleSlotFields()">
+              <option value="recurring">Recurring (weekly service)</option>
+              <option value="event">Other event</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-grid" id="slot-recurring-fields">
+          <div class="field"><label>Day</label>
+            <select id="slot-day"><option>Sunday</option><option>Tuesday</option><option>Thursday</option></select>
+          </div>
+          <div class="field"><label>Window</label>
+            <select id="slot-window" onchange="applyPresetWindow()">
+              <option value="sun-am">Sunday 7:00am – 3:00pm</option>
+              <option value="sun-pm">Sunday 5:00pm – 8:00pm</option>
+              <option value="tue">Tuesday 5:00pm – 10:00pm</option>
+              <option value="thu">Thursday 5:00pm – 10:00pm</option>
+              <option value="custom">Custom time</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-grid" id="slot-event-fields" style="display:none">
+          <div class="field"><label>Event name</label>
+            <select id="slot-event-name">
+              <option value="__custom">+ Type a new event name…</option>
+            </select>
+            <input id="slot-event-name-custom" placeholder="Enter event name" style="margin-top:8px;">
+          </div>
+          <div class="field"><label>Event date</label><input id="slot-event-date" type="date"></div>
+          <div class="field"><label>Session</label>
+            <select id="slot-event-session" onchange="applyPresetWindow()">
+              <option value="day">Day — 7:00am – 3:00pm</option>
+              <option value="evening">Evening — 5:00pm – 10:00pm</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field"><label>Start time</label><input id="slot-start" type="time" value="07:00"></div>
+          <div class="field"><label>End time</label><input id="slot-end" type="time" value="15:00"></div>
+        </div>
+        <div class="action-row"><button class="btn amber" onclick="saveSlot()">Save slot</button><button class="btn ghost" onclick="closeSlotForm()">Cancel</button></div>
+      </div>
+      <div class="slot-grid" id="slots-grid"></div>
+    </section>
+
+    <!-- WORKERS (admin) -->
+    <section class="page" id="page-workers">
+      <div class="page-head"><div><h2>Workers</h2><p>Staff who supervise bookings and driver conduct</p></div>
+        <button class="btn amber" onclick="openWorkerForm()">+ Add worker</button></div>
+      <div id="worker-form-wrap" style="display:none" class="panel">
+        <h3 id="worker-form-title">Add worker</h3>
+        <div class="form-grid">
+          <div class="field"><label>Full name</label><input id="wrk-name"></div>
+          <div class="field"><label>Access code (numeric)</label><input id="wrk-code" type="text" inputmode="numeric" placeholder="e.g. 6001"></div>
+        </div>
+        <div class="action-row"><button class="btn amber" onclick="saveWorker()">Save</button><button class="btn ghost" onclick="closeWorkerForm()">Cancel</button></div>
+      </div>
+      <div class="panel">
+        <table><thead><tr><th>Name</th><th>Access code</th><th>Actions</th></tr></thead>
+        <tbody id="workers-body"></tbody></table>
+      </div>
+    </section>
+
+    <!-- FEEDBACK (all) -->
+    <section class="page" id="page-feedback">
+      <div class="page-head"><div><h2>Feedback</h2><p>Share thoughts on fleet operations</p></div></div>
+      <div class="panel">
+        <h3>Submit feedback</h3>
+        <div class="form-grid full"><div class="field"><label>Your message</label><textarea id="fb-message"></textarea></div></div>
+        <button class="btn amber" onclick="submitFeedback()">Submit</button>
+      </div>
+      <div class="panel"><h3 id="feedback-list-title">Feedback</h3>
+        <table><thead><tr><th>From</th><th>Message</th><th>Date</th></tr></thead>
+        <tbody id="feedback-body"></tbody></table>
+      </div>
+    </section>
+
+    <!-- STAFF ACCESS (bishop / manager view) -->
+    <section class="page" id="page-staffaccess">
+      <div class="page-head"><div><h2>Staff Access</h2><p>Administrators of the system</p></div>
+        <button class="btn amber" id="add-admin-btn" onclick="openAdminForm()">+ Add administrator</button></div>
+      <div id="admin-form-wrap" style="display:none" class="panel">
+        <h3 id="admin-form-title">Add administrator</h3>
+        <div class="form-grid">
+          <div class="field"><label>Full name</label><input id="adm-name"></div>
+          <div class="field"><label>Role</label><select id="adm-role"><option value="manager">Manager</option><option value="bishop">Bishop</option></select></div>
+          <div class="field"><label>Access code (numeric)</label><input id="adm-code" type="text" inputmode="numeric" placeholder="e.g. 1001"></div>
+        </div>
+        <div class="action-row"><button class="btn amber" onclick="saveAdmin()">Save</button><button class="btn ghost" onclick="closeAdminForm()">Cancel</button></div>
+      </div>
+      <div class="panel">
+        <table><thead><tr><th>Name</th><th>Role</th><th>Access code</th><th>Actions</th></tr></thead>
+        <tbody id="staffaccess-body"></tbody></table>
+      </div>
+    </section>
+
+    <!-- DRIVER: MY DAY -->
+    <section class="page" id="page-myday">
+      <div class="page-head"><div><h2 id="myday-title">My Day</h2><p>Book a slot, clock in and out</p></div></div>
+      <div id="myday-msg"></div>
+      <div class="panel" id="clock-panel"></div>
+      <div class="panel"><h3>Book a key slot</h3><div class="slot-grid" id="book-slots-grid"></div></div>
+      <div class="panel" id="book-request-wrap" style="display:none">
+        <h3>Confirm booking</h3>
+        <div id="book-request-slotlabel" style="margin-bottom:12px;color:var(--paper-dim);font-size:13px;"></div>
+        <div class="form-grid">
+          <div class="field" id="book-date-field"><label>Date</label><input id="book-date" type="date"></div>
+          <div class="field"><label>Vehicle</label><select id="book-vehicle"></select></div>
+        </div>
+        <div class="action-row"><button class="btn amber" onclick="confirmBooking()">Confirm request</button><button class="btn ghost" onclick="closeBookingRequest()">Cancel</button></div>
+      </div>
+      <div class="panel"><h3>My bookings</h3>
+        <table><thead><tr><th>Slot</th><th>Vehicle</th><th>Date</th><th>Status</th><th></th></tr></thead>
+        <tbody id="my-bookings-body"></tbody></table>
+      </div>
+    </section>
+
+    <!-- MY PROFILE (all roles) -->
+    <section class="page" id="page-profile">
+      <div class="page-head"><div><h2>My Profile</h2><p id="profile-subtitle">Your account details</p></div></div>
+      <div id="profile-msg"></div>
+      <div class="panel"><div class="profile-card" id="profile-card"></div></div>
+      <div class="panel">
+        <h3>Change my access code</h3>
+        <div class="form-grid">
+          <div class="field"><label>New access code (numeric)</label><input id="my-new-code" type="text" inputmode="numeric" placeholder="e.g. 1234"></div>
+        </div>
+        <button class="btn amber" onclick="changeMyCode()">Update code</button>
+        <div id="my-code-msg"></div>
+      </div>
+      <div class="panel" id="profile-penalties-panel"><h3>My penalties</h3>
+        <table><thead><tr><th>Points</th><th>Reason</th><th>Date</th></tr></thead>
+        <tbody id="my-penalties-body"></tbody></table>
+      </div>
+      <div class="panel" id="profile-notices-panel"><h3>Notices</h3>
+        <table><thead><tr><th>Note</th><th>Date</th></tr></thead>
+        <tbody id="my-notices-body"></tbody></table>
+      </div>
+    </section>
+
+    <!-- DRIVER: REPORT FAULT -->
+    <section class="page" id="page-reportfault">
+      <div class="page-head"><div><h2>Report a Fault</h2><p>Flag a vehicle issue to the fleet office</p></div></div>
+      <div class="panel">
+        <div class="form-grid"><div class="field"><label>Vehicle</label><input id="fault-vehicle" placeholder="e.g. Toyota Hiace - GT 4521-20"></div></div>
+        <div class="form-grid full"><div class="field"><label>Describe the issue</label><textarea id="fault-desc"></textarea></div></div>
+        <button class="btn amber" onclick="submitFault()">Submit report</button>
+      </div>
+      <div class="panel"><h3>My reports</h3>
+        <table><thead><tr><th>Vehicle</th><th>Issue</th><th>Status</th></tr></thead>
+        <tbody id="my-faults-body"></tbody></table>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
