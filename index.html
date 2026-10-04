@@ -1,30 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fleet Operations — Church Fleet &amp; Key Management</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fleet Operations — Church Fleet &amp; Key Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
 <!-- ============ LOGIN ============ -->
 <div id="login-screen">
   <div class="login-shell">
     <div class="login-header">
       <svg class="mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-        <rect x="29" y="4" width="6" height="16" fill="#F59E0B"/>
-        <rect x="22" y="10" width="20" height="6" fill="#F59E0B"/>
-        <path d="M14 30 L32 18 L50 30 V56 H14 Z" fill="none" stroke="#F59E0B" stroke-width="4" stroke-linejoin="round"/>
-        <rect x="27" y="38" width="10" height="18" fill="#F59E0B"/>
+        <rect x="29" y="4" width="6" height="16" fill="#E8A33D"/>
+        <rect x="22" y="10" width="20" height="6" fill="#E8A33D"/>
+        <path d="M14 30 L32 18 L50 30 V56 H14 Z" fill="none" stroke="#E8A33D" stroke-width="4" stroke-linejoin="round"/>
+        <rect x="27" y="38" width="10" height="18" fill="#E8A33D"/>
       </svg>
       <h1>Fleet Operations</h1>
       <span>Church Fleet &amp; Key Management</span>
     </div>
-
     <div class="login-card" id="login-cols-wrap">
       <div class="login-cols" id="login-cols">
         <div class="login-col" id="login-col-driver">
@@ -54,19 +52,15 @@
     <div class="login-foot-row"><button class="back-btn" onclick="resetSystemData()">Reset system data</button></div>
   </div>
 </div>
-
 <!-- ============ APP ============ -->
 <div id="app">
   <aside>
-    <div class="side-brand">
-      <svg class="mark small" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-        <rect x="29" y="4" width="6" height="16" fill="#F59E0B"/>
-        <rect x="22" y="10" width="20" height="6" fill="#F59E0B"/>
-        <path d="M14 30 L32 18 L50 30 V56 H14 Z" fill="none" stroke="#F59E0B" stroke-width="4" stroke-linejoin="round"/>
-        <rect x="27" y="38" width="10" height="18" fill="#F59E0B"/>
-      </svg>
-      <div>Fleet Ops<small>Church Fleet &amp; Key Mgmt</small></div>
-    </div>
+    <div class="side-brand"><svg class="mark small" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <rect x="29" y="4" width="6" height="16" fill="#E8A33D"/>
+      <rect x="22" y="10" width="20" height="6" fill="#E8A33D"/>
+      <path d="M14 30 L32 18 L50 30 V56 H14 Z" fill="none" stroke="#E8A33D" stroke-width="4" stroke-linejoin="round"/>
+      <rect x="27" y="38" width="10" height="18" fill="#E8A33D"/>
+    </svg><div>Fleet Ops<small>Church Fleet &amp; Key Mgmt</small></div></div>
     <nav class="tabs" id="nav-tabs"></nav>
     <div class="side-user">
       <div class="role" id="user-role"></div>
@@ -75,7 +69,6 @@
     </div>
   </aside>
   <main>
-
     <!-- OVERVIEW -->
     <section class="page" id="page-overview">
       <div class="page-head"><div><h2>Overview</h2><p>Live snapshot of today's operation</p></div></div>
@@ -83,6 +76,10 @@
       <div class="panel"><h3>License alerts</h3>
         <table><thead><tr><th>Driver</th><th>License expiry</th><th>Status</th><th>Action</th></tr></thead>
         <tbody id="overview-license-body"></tbody></table>
+      </div>
+      <div class="panel"><h3>Fuel alerts</h3>
+        <table><thead><tr><th>Vehicle</th><th>Fuel level</th><th>Status</th></tr></thead>
+        <tbody id="overview-fuel-body"></tbody></table>
       </div>
       <div class="panel"><h3>Keys currently out</h3>
         <table><thead><tr><th>Driver</th><th>Slot</th><th>Vehicle</th><th>Since</th></tr></thead>
@@ -93,7 +90,6 @@
         <tbody id="overview-faults-body"></tbody></table>
       </div>
     </section>
-
     <!-- BOOKINGS & KEYS (admin) -->
     <section class="page" id="page-bookings">
       <div class="page-head"><div><h2>Bookings &amp; Keys</h2><p>Approve requests and track key movement</p></div></div>
@@ -106,7 +102,6 @@
         <tbody id="all-bookings-body"></tbody></table>
       </div>
     </section>
-
     <!-- VEHICLES -->
     <section class="page" id="page-vehicles">
       <div class="page-head"><div><h2>Vehicles</h2><p>Fleet condition, fuel and mileage</p></div>
@@ -125,7 +120,6 @@
       </div>
       <div class="vehicle-grid" id="vehicles-grid"></div>
     </section>
-
     <!-- DRIVERS (admin + worker) -->
     <section class="page" id="page-drivers">
       <div class="page-head"><div><h2>Drivers</h2><p>Profiles, license status, and suspension</p></div>
@@ -146,7 +140,6 @@
         <tbody id="drivers-body"></tbody></table>
       </div>
     </section>
-
     <!-- PENALTIES (worker + admin) -->
     <section class="page" id="page-penalties">
       <div class="page-head"><div><h2>Penalty System</h2><p>Log and review driver penalties</p></div></div>
@@ -164,7 +157,6 @@
         <tbody id="penalties-body"></tbody></table>
       </div>
     </section>
-
     <!-- CALL TO ORDER (worker + admin) -->
     <section class="page" id="page-callorder">
       <div class="page-head"><div><h2>Call Driver to Order</h2><p>Formal conduct notices for drivers</p></div></div>
@@ -181,7 +173,6 @@
         <tbody id="callorder-body"></tbody></table>
       </div>
     </section>
-
     <!-- APPROVALS (worker) -->
     <section class="page" id="page-approvals">
       <div class="page-head"><div><h2>Approve Bookings</h2><p>Review pending key requests</p></div></div>
@@ -190,7 +181,6 @@
         <tbody id="worker-pending-body"></tbody></table>
       </div>
     </section>
-
     <!-- FAULTS (admin view) -->
     <section class="page" id="page-faults">
       <div class="page-head"><div><h2>Faults</h2><p>Reported vehicle issues</p></div></div>
@@ -199,7 +189,6 @@
         <tbody id="faults-admin-body"></tbody></table>
       </div>
     </section>
-
     <!-- KEY SLOTS (admin) -->
     <section class="page" id="page-slots">
       <div class="page-head"><div><h2>Key Slots</h2><p>Regular schedule and one-off events</p></div>
@@ -251,7 +240,6 @@
       </div>
       <div class="slot-grid" id="slots-grid"></div>
     </section>
-
     <!-- WORKERS (admin) -->
     <section class="page" id="page-workers">
       <div class="page-head"><div><h2>Workers</h2><p>Staff who supervise bookings and driver conduct</p></div>
@@ -269,21 +257,20 @@
         <tbody id="workers-body"></tbody></table>
       </div>
     </section>
-
     <!-- FEEDBACK (all) -->
     <section class="page" id="page-feedback">
       <div class="page-head"><div><h2>Feedback</h2><p>Share thoughts on fleet operations</p></div></div>
       <div class="panel">
         <h3>Submit feedback</h3>
+        <div class="form-grid"><div class="field"><label>About which car? (optional)</label><select id="fb-vehicle"><option value="">General feedback — not about a specific car</option></select></div></div>
         <div class="form-grid full"><div class="field"><label>Your message</label><textarea id="fb-message"></textarea></div></div>
         <button class="btn amber" onclick="submitFeedback()">Submit</button>
       </div>
       <div class="panel"><h3 id="feedback-list-title">Feedback</h3>
-        <table><thead><tr><th>From</th><th>Message</th><th>Date</th></tr></thead>
+        <table><thead><tr><th>From</th><th>Car</th><th>Message</th><th>Date</th></tr></thead>
         <tbody id="feedback-body"></tbody></table>
       </div>
     </section>
-
     <!-- STAFF ACCESS (bishop / manager view) -->
     <section class="page" id="page-staffaccess">
       <div class="page-head"><div><h2>Staff Access</h2><p>Administrators of the system</p></div>
@@ -302,7 +289,6 @@
         <tbody id="staffaccess-body"></tbody></table>
       </div>
     </section>
-
     <!-- DRIVER: MY DAY -->
     <section class="page" id="page-myday">
       <div class="page-head"><div><h2 id="myday-title">My Day</h2><p>Book a slot, clock in and out</p></div></div>
@@ -323,7 +309,6 @@
         <tbody id="my-bookings-body"></tbody></table>
       </div>
     </section>
-
     <!-- MY PROFILE (all roles) -->
     <section class="page" id="page-profile">
       <div class="page-head"><div><h2>My Profile</h2><p id="profile-subtitle">Your account details</p></div></div>
@@ -346,12 +331,16 @@
         <tbody id="my-notices-body"></tbody></table>
       </div>
     </section>
-
     <!-- DRIVER: REPORT FAULT -->
     <section class="page" id="page-reportfault">
       <div class="page-head"><div><h2>Report a Fault</h2><p>Flag a vehicle issue to the fleet office</p></div></div>
       <div class="panel">
-        <div class="form-grid"><div class="field"><label>Vehicle</label><input id="fault-vehicle" placeholder="e.g. Toyota Hiace - GT 4521-20"></div></div>
+        <div class="form-grid">
+          <div class="field"><label>Vehicle</label>
+            <select id="fault-vehicle-select" onchange="toggleFaultVehicleOther()"></select>
+          </div>
+          <div class="field" id="fault-vehicle-other-field" style="display:none"><label>Vehicle name</label><input id="fault-vehicle-other" placeholder="e.g. Toyota Hiace - GT 4521-20"></div>
+        </div>
         <div class="form-grid full"><div class="field"><label>Describe the issue</label><textarea id="fault-desc"></textarea></div></div>
         <button class="btn amber" onclick="submitFault()">Submit report</button>
       </div>
@@ -360,10 +349,8 @@
         <tbody id="my-faults-body"></tbody></table>
       </div>
     </section>
-
   </main>
 </div>
-
-<script src="app.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
